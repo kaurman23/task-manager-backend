@@ -3,7 +3,8 @@ const { default: validator } = require('validator');
 
 mongoose.connect('mongodb://127.0.0.1:27018/task-manager-api',{ 
     useNewUrlParser: true, 
-    useUnifiedTopology:true})
+    useUnifiedTopology:true,
+    useFindAndModify:true})
 
 
 
@@ -21,19 +22,7 @@ mongoose.connect('mongodb://127.0.0.1:27018/task-manager-api',{
 //     console.log('There seems to be an error: ',error)
 // })
 
-// const taskSchema = new mongoose.Schema({
-//     desc: {
-//         type:String,
-//         trim:true,
-//         required:true
-//     },
-//     completed: {
-//         type: Boolean,
-//         default: false
-//     }
-// })
 
-// const Task = mongoose.model('Task', taskSchema);
 
 // const newTask = new Task({
 //     desc:'Watch Game of Thrones'
