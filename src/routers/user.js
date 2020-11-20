@@ -32,7 +32,8 @@ router.post('/users', async (req,res)=>{
     
     try {
         await newUser.save();
-        res.status(201).send(newUser)
+        const token = await newUser.generateAuthToken()
+        res.send({newUser, token})
     }
     catch(error)
     {
@@ -43,9 +44,9 @@ router.post('/users', async (req,res)=>{
 router.post('/users/login', async (req,res) => {
     try {
         const user = await User.findByCredential(req.body.email,req.body.password)
-        // console.log(user)
-        res.send(user)
-    } catch (error) {
+        const token = await user.generateAuthToken()
+        res.send({user, token})
+    } catch (error) { 
         res.status(400).send()
     }
 })
