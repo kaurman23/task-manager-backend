@@ -8,7 +8,6 @@ router.get('/users/me',auth, async (req,res) => {
     res.send(req.user)
     
 })
-
 router.get('/users/:id',async (req,res) => {
     const _id = req.params.id 
     try {
@@ -28,7 +27,7 @@ router.post('/users', async (req,res)=>{
     try {
         await newUser.save();
         const token = await newUser.generateAuthToken()
-        res.send({newUser, token})
+        res.status(201).send({newUser, token})
     }
     catch(error)
     {
@@ -38,11 +37,26 @@ router.post('/users', async (req,res)=>{
 
 router.post('/users/login', async (req,res) => {
     try {
+        //checks if email and password and right and if right returns the user
         const user = await User.findByCredential(req.body.email,req.body.password)
+        //generates jwt token to be used 
         const token = await user.generateAuthToken()
         res.send({user, token})
     } catch (error) { 
         res.status(400).send()
+    }
+})
+
+router.post('/users/logout', auth, async (req,res) => {
+    try {
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token!==req.token
+        })
+        await req.user.save()
+
+        res.send();
+    } catch (error) {
+        res.status(500).send();
     }
 })
 
