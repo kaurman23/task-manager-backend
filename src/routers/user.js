@@ -60,6 +60,17 @@ router.post('/users/logout', auth, async (req,res) => {
     }
 })
 
+router.post('/users/logoutAll', auth, async (req,res) => {
+    try{
+        // console.log(req.user.tokens)
+        req.user.tokens = []
+        await req.user.save()
+        res.send()
+    } catch(error) {
+        res.status(500).send()
+    }
+})
+
 
 //PATCH
 router.patch('/users/:id', async (req,res) => {
