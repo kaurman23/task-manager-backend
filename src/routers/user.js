@@ -73,7 +73,7 @@ router.post('/users/logoutAll', auth, async (req,res) => {
 
 
 //PATCH
-router.patch('/users/:id', async (req,res) => {
+router.patch('/users/me',auth, async (req,res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name','age','email','password']
     const valid = updates.every((update) => {
@@ -83,12 +83,9 @@ router.patch('/users/:id', async (req,res) => {
     if(!valid) return res.status(400).send();
      
     try {
-        const updatedUser = await User.findById(req.params.id);
-        updates.forEach((update) => updatedUser[update]=req.body[update])
-        await updatedUser.save()
-        //const updatedUser = await User.findByIdAndUpdate(req.params.id,req.body, {new: true, runValidators: true})
-        if(!updatedUser) return res.status(404).send()
-        res.send(updatedUser)
+        updates.forEach((update) => req.user[update]=req.body[update])
+        await req.user.save()
+        res.send(req.user)
     } catch(error) { 
         res.status(400).send(error)
     }

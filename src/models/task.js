@@ -9,16 +9,22 @@ const taskSchema = new mongoose.Schema({
     completed: {
         type: Boolean,
         default: false
+    },
+    //owner will contain the ID only not the whole object of the user
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
     }
 })
 
-taskSchema.pre('save', async function(next) {
-    const task = this
+// taskSchema.pre('save', async function(next) {
+//     const task = this
 
-    console.log("Task middleware")
+//     console.log("Task middleware")
 
-    next()
-})
+//     next()
+// })
 
 
 const Task = mongoose.model('Task', taskSchema)
