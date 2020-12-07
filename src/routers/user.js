@@ -3,9 +3,6 @@ const router = new express.Router()
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const multer = require('multer')
-const upload = multer({
-    dest: 'images'
-})
 
 //GET
 router.get('/users/me',auth, async (req,res) => {
@@ -75,7 +72,19 @@ router.post('/users/logoutAll', auth, async (req,res) => {
     }
 })
 
-
+const upload = multer({
+    dest: 'images',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req,file,cb){
+        if(!file.originalname.match(/\.(doc|docx )$/))   //upload only doc files
+        {
+            return cb(new Error('Please upload a doc!'))
+        }
+        cb(undefined,true)
+    }
+})
 router.post('/users/me/avatar', upload.single('avatar'), (req,res) => {
     res.status(201).send()
 })
