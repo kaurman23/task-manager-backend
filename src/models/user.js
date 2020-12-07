@@ -50,9 +50,11 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }]
+},{
+    timestamps: true
 })
 
-userSchema.virtual('tasks',{
+userSchema.virtual('tasks',{  //this will create a tasks property on user which will contains all the tasks
     ref:'Task',
     localField:'_id', //will map the _id property of user to 
     foreignField:'owner' //owner field which contains the id of user (owner) 

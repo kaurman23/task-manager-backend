@@ -5,10 +5,15 @@ const auth =require('../middleware/auth')
 
 //GET
 router.get('/tasks', auth, async (req,res) => {
-
+    const match = {
+        completed: req.query.completed === "true"
+    }
     try {
        // const tasks = await Task.find({owner: req.user.id})
-       await req.user.populate('tasks').execPopulate()
+       await req.user.populate({
+           path:'tasks',
+           match
+       }).execPopulate()
         res.send(req.user.tasks)
     } catch(error) {
         res.status(500).send(error)
@@ -27,6 +32,7 @@ router.get('/tasks/:id',auth, async (req,res) => {
     } catch(errror) {
         res.send(error)
     }
+
 })
 
 
