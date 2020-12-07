@@ -2,17 +2,27 @@ const express = require('express')
 const router = new express.Router()
 const Task = require('../models/task')
 const auth =require('../middleware/auth')
+const { query } = require('express')
 
 //GET
+//GET /tasks/completed=true
+//GET /tasks/limit=10&skip=20
 router.get('/tasks', auth, async (req,res) => {
-    const match = {
-        completed: req.query.completed === "true"
+    const match = { }
+
+    if(req.query.completed)
+    {
+        match.completed = req.query.completed === "true"
     }
     try {
        // const tasks = await Task.find({owner: req.user.id})
        await req.user.populate({
            path:'tasks',
-           match
+           match,
+           options: {
+               limit: parseInt(req.query.limit),
+               skip: parseInt(req.query.skip) 
+           }
        }).execPopulate()
         res.send(req.user.tasks)
     } catch(error) {
