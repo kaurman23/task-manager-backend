@@ -22,19 +22,38 @@ beforeEach( async () => {
 })
 
 test('Should register user', async () => {
-    await request(app).post('/users').send({
+    const response = await request(app).post('/users').send({
         name:'Jinx',
         email:'x@y.com',
         password:'whatever123'
     }).expect(201)
+
+    //assert that the database was change correctly
+    const user = await User.findById(response.body.newUser._id)
+    expect(user).not.toBeNull()
+
+    //assertions about the response
+    expect(response.body).toMatchObject({
+        newUser: {
+            name: "Jinx",
+            email: "x@y.com"
+        },
+        token: user.tokens[0].token
+    })
+    //assert password
+    expect(user.password).not.toBe("whatever123")
 })
 
 test('Should log in existing users', async () => {
-    await request(app).post('/users/login').send({
+    const response = await request(app).post('/users/login').send({
         name: "Mike",
         email: "monster@inc.com",
         password: "whatever123"
     }).expect(200)
+
+    const user = await User.findById(userOneID)
+    expect(response.body.token).toBe(user.tokens[1].token)
+
 })
 
 test('Should not log in non-existing user', async () => {
@@ -66,6 +85,9 @@ test('Should delete user profile', async () => {
         .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
         .send()
         .expect(200)
+
+    const user = await User.findById(userOneID)
+    expect(user).toBeNull()
 })
 
 test('Should delete user profile without authentication', async () => {
